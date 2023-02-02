@@ -1,5 +1,4 @@
 import { Component } from 'react';
-import {Loader} from './Loader/Loader';
 import {SearchBar} from './Searchbar/SearchBar';
 import {ImageGallery} from './ImageGallery/ImageGallery';
 
@@ -15,7 +14,6 @@ this.setState({imageQuery})
     <div>
       <SearchBar onSubmit={this.handleForSubmit}/>
       <ImageGallery imageQuery={this.state.imageQuery}/>
-     <Loader/>
     </div>
   );}
   
