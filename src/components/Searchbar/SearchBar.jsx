@@ -1,5 +1,6 @@
 // import PropTypes from 'prop-types';
 import { Component } from 'react';
+import {SearchBarStyle} from './SearchBar.styled';
 
 export class SearchBar extends Component {
 
@@ -19,7 +20,7 @@ this.setState({imageQuery:''});
     }
 
     render(){
-        return (<header className="searchbar">
+        return (<SearchBarStyle className="searchbar">
         <form className="form" onSubmit={this.handleSubmit}>
           <button type="submit" className="button">
             <span className="button-label">Search</span>
@@ -36,6 +37,6 @@ this.setState({imageQuery:''});
             placeholder="Search images and photos"
           />
         </form>
-      </header>)
+      </SearchBarStyle>)
     }
 }
