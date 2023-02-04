@@ -1,31 +1,31 @@
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { Component } from 'react';
-import {SearchBarStyle} from './SearchBar.styled';
+import { SearchBarStyle } from './SearchBar.styled';
 
 export class SearchBar extends Component {
+  state = {
+    imageQuery: '',
+  };
 
-    state = {
-imageQuery:'',
-    }
+  handleQueryChange = e => {
+    e.preventDefault();
+    this.setState({ imageQuery: e.currentTarget.value.toLowerCase() });
+  };
 
-    handleQueryChange = (e)=>{
-e.preventDefault();
-this.setState({imageQuery: e.currentTarget.value.toLowerCase()})
-    }
+  handleSubmit = e => {
+    e.preventDefault();
+    this.props.onSubmit(this.state.imageQuery);
+    this.setState({ imageQuery: '' });
+  };
 
-    handleSubmit = (e)=>{
-e.preventDefault();
-this.props.onSubmit(this.state.imageQuery);
-this.setState({imageQuery:''});
-    }
-
-    render(){
-        return (<SearchBarStyle className="searchbar">
+  render() {
+    return (
+      <SearchBarStyle className="searchbar">
         <form className="form" onSubmit={this.handleSubmit}>
           <button type="submit" className="button">
             <span className="button-label">Search</span>
           </button>
-      
+
           <input
             className="input"
             type="text"
@@ -37,6 +37,10 @@ this.setState({imageQuery:''});
             placeholder="Search images and photos"
           />
         </form>
-      </SearchBarStyle>)
-    }
+      </SearchBarStyle>
+    );
+  }
 }
+SearchBar.protoTypes = {
+  onSubmit: PropTypes.func.isRequired,
+};

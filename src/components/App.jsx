@@ -11,17 +11,12 @@ export class App extends Component {
   handleForSubmit = imageQuery => {
     this.setState({ imageQuery });
   };
-  
-  // handleClickBigImage = url => {
-  //    this.setState({ bigImgUrl: url });
-  // };
 
   render() {
     return (
       <AppStyle>
         <SearchBar onSubmit={this.handleForSubmit} />
         <ImageGallery imageQuery={this.state.imageQuery} />
-
       </AppStyle>
     );
   }
