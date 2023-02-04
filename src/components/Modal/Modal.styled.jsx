@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 export const ModalStyle = styled.div`
-.overlay{position: fixed;
+position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
@@ -10,7 +10,7 @@ export const ModalStyle = styled.div`
     justify-content: center;
     align-items: center;
     background-color: rgba(0, 0, 0, 0.8);
-    z-index: 1200;}
+    z-index: 1200;
     
  
   

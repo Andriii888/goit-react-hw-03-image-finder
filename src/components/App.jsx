@@ -1,29 +1,28 @@
 import { Component } from 'react';
-import {SearchBar} from './Searchbar/SearchBar';
-import {ImageGallery} from './ImageGallery/ImageGallery';
-import {AppStyle} from './AppStyle.styled';
-import {LoadMoreButton} from './Button/Button';
-import {Modal} from './Modal/Modal';
+import { SearchBar } from './Searchbar/SearchBar';
+import { ImageGallery } from './ImageGallery/ImageGallery';
+import { AppStyle } from './AppStyle.styled';
 
 export class App extends Component {
   state = {
-    imageQuery:'',
-    imgURL:null,
-        }
+    imageQuery: '',
+  };
 
-        handleForSubmit=imageQuery=>{
-this.setState({imageQuery})
-        }
-
-       
-
-  render (){return (
-    <AppStyle>
-      <SearchBar onSubmit={this.handleForSubmit}/>
-      <ImageGallery imageQuery={this.state.imageQuery}/>
-      {this.state.imageQuery && <LoadMoreButton/>}
-      {this.state.imgURL && <Modal url={this.state.imgURL}/>}
-    </AppStyle>
-  );}
+  handleForSubmit = imageQuery => {
+    this.setState({ imageQuery });
+  };
   
-};
+  // handleClickBigImage = url => {
+  //    this.setState({ bigImgUrl: url });
+  // };
+
+  render() {
+    return (
+      <AppStyle>
+        <SearchBar onSubmit={this.handleForSubmit} />
+        <ImageGallery imageQuery={this.state.imageQuery} />
+
+      </AppStyle>
+    );
+  }
+}
