@@ -11,11 +11,10 @@ export class ImageGallery extends Component {
   state = {
     imagesData: [],
     page: 1,
-    loading: false,
     error: null,
     bigImg: null,
-    loadMore: false,
     openModal: false,
+    status: 'idle',
   };
 
   //  async componentDidMount() {
@@ -27,25 +26,24 @@ export class ImageGallery extends Component {
   //   }
   async componentDidUpdate(pP, pS) {
     if (pP.imageQuery !== this.props.imageQuery) {
-      this.setState({ imagesData: [], loading: true });
+      // this.setState({ imagesData: [], loading: true });
+      this.setState({ imagesData: [], status: 'pending' });
 
       await fetchImages(this.props.imageQuery, this.state.page)
-        .then(data => this.setState({ imagesData: data.hits, loadMore: true }))
-        .catch(error => this.setState({ error }))
-        .finally(() => this.setState({ loading: false }));
+        .then(data =>
+          this.setState({ imagesData: data.hits, status: 'resolved' })
+        )
+        .catch(error => this.setState({ error }));
     }
     if (pS.page !== this.state.page) {
-      this.setState({ loading: true });
-
       await fetchImages(this.props.imageQuery, this.state.page)
         .then(data =>
           this.setState({
             imagesData: [...pS.imagesData, ...data.hits],
-            loadMore: true,
+            status: 'resolved',
           })
         )
-        .catch(error => this.setState({ error }))
-        .finally(() => this.setState({ loading: false }));
+        .catch(error => this.setState({ error }));
     }
   }
   handleClickImg = url => {
@@ -61,28 +59,30 @@ export class ImageGallery extends Component {
   };
 
   render() {
-    return (
-      <>
-        {this.state.error && <h1>{this.state.error.message}</h1>}
-        {this.state.loading && <Loader />}
-        {this.state.imagesData.length > 0 && (
+    const { imagesData, error, bigImg, openModal, status } = this.state;
+    if (status === 'idle') {
+      return;
+    }
+    if (status === 'pending') {
+      return <Loader />;
+    }
+    if (status === 'rejected') {
+      return <h1>{error.message}</h1>;
+    }
+    if (status === 'resolved') {
+      return (
+        <>
           <ImageGalleryStyle className="gallery">
-            <ImageGalleryItem
-              data={this.state.imagesData}
-              imgUrl={this.handleClickImg}
-            />
+            <ImageGalleryItem data={imagesData} imgUrl={this.handleClickImg} />
           </ImageGalleryStyle>
-        )}
-        {this.state.openModal && (
-          <Modal url={this.state.bigImg} onClose={this.toggleOpenModal} />
-        )}
-        {this.state.loadMore && (
           <LoadMoreButton onClickLoadMore={this.clickLoadMore} />
-        )}
-      </>
-    );
+          {openModal && <Modal url={bigImg} onClose={this.toggleOpenModal} />}
+        </>
+      );
+    }
   }
 }
+
 ImageGallery.protoTypes = {
   imageQuery: PropTypes.string.isRequired,
 };
