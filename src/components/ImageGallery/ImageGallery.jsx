@@ -15,15 +15,16 @@ export class ImageGallery extends Component {
     error: null,
     bigImg: null,
     loadMore: false,
+    openModal: false,
   };
 
- async componentDidMount() {
-    this.setState({ loading: true });
-    await fetchImages(this.props.imageQuery, this.state.page)
-      .then(data => this.setState({ imagesData: data.hits, loadMore: true }))
-      .catch(error => this.setState({ error }))
-      .finally(() => this.setState({ loading: false }));
-  } 
+  //  async componentDidMount() {
+  //       this.setState({ loading: true });
+  //     await fetchImages(this.props.imageQuery, this.state.page)
+  //       .then(data => this.setState({ imagesData: data.hits, loadMore: true }))
+  //       .catch(error => this.setState({ error }))
+  //       .finally(() => this.setState({ loading: false }));
+  //   }
   async componentDidUpdate(pP, pS) {
     if (pP.imageQuery !== this.props.imageQuery) {
       this.setState({ imagesData: [], loading: true });
@@ -48,11 +49,15 @@ export class ImageGallery extends Component {
     }
   }
   handleClickImg = url => {
-    this.setState({ bigImg: url });
+    this.setState({ bigImg: url, openModal: true });
   };
 
   clickLoadMore = page => {
     this.setState({ page });
+  };
+
+  toggleOpenModal = () => {
+    this.setState(({ openModal }) => ({ openModal: !openModal }));
   };
 
   render() {
@@ -68,7 +73,9 @@ export class ImageGallery extends Component {
             />
           </ImageGalleryStyle>
         )}
-        {this.state.bigImg && <Modal url={this.state.bigImg} />}
+        {this.state.openModal && (
+          <Modal url={this.state.bigImg} onClose={this.toggleOpenModal} />
+        )}
         {this.state.loadMore && (
           <LoadMoreButton onClickLoadMore={this.clickLoadMore} />
         )}
