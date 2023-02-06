@@ -3,12 +3,8 @@ import { Component } from 'react';
 import { ButtonLoadStyle } from './ButtonStyle.styled';
 
 export class LoadMoreButton extends Component {
-  state = {
-    page: 1,
-  };
-  handleClickMore = () => {
-    this.setState({ page: this.state.page + 1 });
-    this.props.onClickLoadMore(this.state.page + 1);
+  handleClickMore = e => {
+    this.props.onClickLoadMore(this.props.page + 1);
   };
   render() {
     return (

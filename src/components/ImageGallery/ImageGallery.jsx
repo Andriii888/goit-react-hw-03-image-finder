@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { PureComponent } from 'react';
 import { Loader } from '../Loader/Loader';
 import { ImageGalleryItem } from '../ImageGalleryItem/ImageGalleryItem';
 import { ImageGalleryStyle } from './ImageGallery.styled';
@@ -7,7 +7,7 @@ import { Modal } from '../Modal/Modal';
 import { LoadMoreButton } from '../Button/Button';
 import { fetchImages } from '../api';
 
-export class ImageGallery extends Component {
+export class ImageGallery extends PureComponent {
   state = {
     imagesData: [],
     page: 1,
@@ -26,16 +26,16 @@ export class ImageGallery extends Component {
   //   }
   async componentDidUpdate(pP, pS) {
     if (pP.imageQuery !== this.props.imageQuery) {
-      // this.setState({ imagesData: [], loading: true });
-      this.setState({ imagesData: [], status: 'pending' });
+      this.setState({ status: 'pending' });
 
-      await fetchImages(this.props.imageQuery, this.state.page)
+      await fetchImages(this.props.imageQuery, 1)
         .then(data =>
-          this.setState({ imagesData: data.hits, status: 'resolved' })
+          this.setState({ imagesData: data.hits, status: 'resolved', page: 1 })
         )
         .catch(error => this.setState({ error }));
     }
-    if (pS.page !== this.state.page) {
+    if (pS.page !== this.state.page && this.state.page !== 1) {
+      this.setState({ status: 'pending' });
       await fetchImages(this.props.imageQuery, this.state.page)
         .then(data =>
           this.setState({
@@ -75,7 +75,10 @@ export class ImageGallery extends Component {
           <ImageGalleryStyle className="gallery">
             <ImageGalleryItem data={imagesData} imgUrl={this.handleClickImg} />
           </ImageGalleryStyle>
-          <LoadMoreButton onClickLoadMore={this.clickLoadMore} />
+          <LoadMoreButton
+            onClickLoadMore={this.clickLoadMore}
+            page={this.state.page}
+          />
           {openModal && <Modal url={bigImg} onClose={this.toggleOpenModal} />}
         </>
       );
