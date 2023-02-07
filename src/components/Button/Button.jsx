@@ -18,6 +18,6 @@ export function LoadMoreButton({ onClick, page }) {
 }
 
 LoadMoreButton.protoTypes = {
-  onClickLoadMore: PropTypes.func.isRequired,
+  onClick: PropTypes.func.isRequired,
   page: PropTypes.string.isRequired,
 };
