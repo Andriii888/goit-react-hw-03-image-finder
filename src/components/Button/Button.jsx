@@ -1,23 +1,23 @@
 import PropTypes from 'prop-types';
-import { Component } from 'react';
 import { ButtonLoadStyle } from './ButtonStyle.styled';
 
-export class LoadMoreButton extends Component {
-  handleClickMore = e => {
-    this.props.onClickLoadMore(this.props.page + 1);
-  };
-  render() {
-    return (
-      <ButtonLoadStyle
-        type="button"
-        onClick={this.handleClickMore}
-        className="button"
-      >
-        Load More
-      </ButtonLoadStyle>
-    );
-  }
+export function LoadMoreButton({ onClick, page }) {
+  const currentPage = page + 1;
+  return (
+    <ButtonLoadStyle
+      type="button"
+      onClick={e => {
+        e.preventDefault();
+        return onClick(currentPage);
+      }}
+      className="button"
+    >
+      Load More
+    </ButtonLoadStyle>
+  );
 }
+
 LoadMoreButton.protoTypes = {
   onClickLoadMore: PropTypes.func.isRequired,
+  page: PropTypes.string.isRequired,
 };

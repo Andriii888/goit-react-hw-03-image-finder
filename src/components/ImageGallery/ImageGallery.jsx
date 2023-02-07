@@ -9,12 +9,13 @@ import { fetchImages } from '../api';
 
 export class ImageGallery extends PureComponent {
   state = {
-    imagesData: [],
+    imagesData: null,
     page: 1,
     error: null,
     bigImg: null,
     openModal: false,
     status: 'idle',
+    isLoad:false,
   };
 
   //  async componentDidMount() {
@@ -26,21 +27,22 @@ export class ImageGallery extends PureComponent {
   //   }
   async componentDidUpdate(pP, pS) {
     if (pP.imageQuery !== this.props.imageQuery) {
-      this.setState({ status: 'pending' });
+      this.setState({ isLoad: true });
 
       await fetchImages(this.props.imageQuery, 1)
         .then(data =>
-          this.setState({ imagesData: data.hits, status: 'resolved', page: 1 })
+          this.setState({ imagesData: data.hits,isLoad:false, status: 'resolved', page: 1 })
         )
         .catch(error => this.setState({ error }));
     }
     if (pS.page !== this.state.page && this.state.page !== 1) {
-      this.setState({ status: 'pending' });
+      this.setState({ isLoad: true });
       await fetchImages(this.props.imageQuery, this.state.page)
-        .then(data =>
+      .then(data =>
           this.setState({
-            imagesData: [...pS.imagesData, ...data.hits],
+            isLoad:false,
             status: 'resolved',
+            imagesData: [...pS.imagesData, ...data.hits],
           })
         )
         .catch(error => this.setState({ error }));
@@ -64,7 +66,7 @@ export class ImageGallery extends PureComponent {
       return;
     }
     if (status === 'pending') {
-      return <Loader />;
+      // return <Loader />;
     }
     if (status === 'rejected') {
       return <h1>{error.message}</h1>;
@@ -76,9 +78,10 @@ export class ImageGallery extends PureComponent {
             <ImageGalleryItem data={imagesData} imgUrl={this.handleClickImg} />
           </ImageGalleryStyle>
           <LoadMoreButton
-            onClickLoadMore={this.clickLoadMore}
+            onClick={this.clickLoadMore}
             page={this.state.page}
           />
+          {this.state.isLoad && <Loader />}
           {openModal && <Modal url={bigImg} onClose={this.toggleOpenModal} />}
         </>
       );
