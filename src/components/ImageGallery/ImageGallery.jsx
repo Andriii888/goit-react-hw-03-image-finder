@@ -7,6 +7,12 @@ import { Modal } from '../Modal/Modal';
 import { LoadMoreButton } from '../Button/Button';
 import { fetchImages } from '../api';
 
+const Status = {
+  IDLE: 'idle',
+  PENDING: 'pending',
+  REJECTED: 'rejected',
+  RESOLVED: 'resolved',
+};
 export class ImageGallery extends PureComponent {
   state = {
     imagesData: null,
@@ -14,8 +20,8 @@ export class ImageGallery extends PureComponent {
     error: null,
     bigImg: null,
     openModal: false,
-    status: 'idle',
-    isLoad:false,
+    status: Status.IDLE,
+    isLoad: false,
   };
 
   //  async componentDidMount() {
@@ -27,24 +33,30 @@ export class ImageGallery extends PureComponent {
   //   }
   async componentDidUpdate(pP, pS) {
     if (pP.imageQuery !== this.props.imageQuery) {
-      this.setState({ isLoad: true });
+      this.setState({ imagesData: null, isLoad: true, status: Status.PENDING });
 
       await fetchImages(this.props.imageQuery, 1)
         .then(data =>
-          this.setState({ imagesData: data.hits,isLoad:false, status: 'resolved', page: 1 })
+          this.setState({
+            isLoad: false,
+            imagesData: data.hits,
+            status: Status.RESOLVED,
+            page: 1,
+          })
         )
         .catch(error => this.setState({ error }));
     }
     if (pS.page !== this.state.page && this.state.page !== 1) {
+      // this.setState({ isLoad: true,status:Status.PENDING});
       this.setState({ isLoad: true });
       await fetchImages(this.props.imageQuery, this.state.page)
-      .then(data =>
+        .then(data => {
           this.setState({
-            isLoad:false,
-            status: 'resolved',
             imagesData: [...pS.imagesData, ...data.hits],
-          })
-        )
+            status: Status.RESOLVED,
+            isLoad: false,
+          });
+        })
         .catch(error => this.setState({ error }));
     }
   }
@@ -62,26 +74,24 @@ export class ImageGallery extends PureComponent {
 
   render() {
     const { imagesData, error, bigImg, openModal, status } = this.state;
-    if (status === 'idle') {
+    if (status === Status.IDLE) {
       return;
     }
-    if (status === 'pending') {
-      // return <Loader />;
+    if (status === Status.PENDING) {
+      // return <Loader />
     }
-    if (status === 'rejected') {
+    if (status === Status.REJECTED) {
       return <h1>{error.message}</h1>;
     }
-    if (status === 'resolved') {
+    if (status === Status.RESOLVED) {
       return (
         <>
           <ImageGalleryStyle className="gallery">
             <ImageGalleryItem data={imagesData} imgUrl={this.handleClickImg} />
           </ImageGalleryStyle>
-          <LoadMoreButton
-            onClick={this.clickLoadMore}
-            page={this.state.page}
-          />
+          <LoadMoreButton onClick={this.clickLoadMore} page={this.state.page} />
           {this.state.isLoad && <Loader />}
+          {/* <Loader /> */}
           {openModal && <Modal url={bigImg} onClose={this.toggleOpenModal} />}
         </>
       );
